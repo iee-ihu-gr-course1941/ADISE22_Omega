@@ -24,7 +24,7 @@ function set_user($input) {
 
         update_game_status();
     $sql = 'select from players where username = ?';
-        $st = $mysqli->prepare($sql);
+    $st = $mysqli->prepare($sql);
     $st->bind_param('s',$username);
     $st->execute();
     $res = $st->get_result();
@@ -38,6 +38,17 @@ function show_users() {
     global $mysqli;
     $sql = 'select username,playerId from players';
     $st = $mysqli->prepare($sql);
+    $st->execute();
+    $res = $st->get_result();
+    header('Content-type: application/json');
+    print json_encode($res->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
+}
+
+function show_user($pId) {
+    global $mysqli;
+    $sql = 'select username,playerId from players where playerId = ?';
+    $st = $mysqli->prepare($sql);
+    $st->bind_param('i',$pId);
     $st->execute();
     $res = $st->get_result();
     header('Content-type: application/json');
