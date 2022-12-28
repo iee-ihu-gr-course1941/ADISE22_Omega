@@ -61,7 +61,7 @@ function update_game_status() {
 				break;
 	}
 
-	$sql = 'update game_status set status=?, playerId=?';
+	$sql = 'update game_status set g_status=?, playerId=?';
 	$st = $mysqli->prepare($sql);
 	$st->bind_param('ss',$new_status,$new_playerId);
 	$st->execute();
