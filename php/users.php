@@ -11,17 +11,41 @@ function show_users() {
 	header('Content-type: application/json');
 	print json_encode($res->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
 }
+ 
+function show_user($input) {
+    global $mysqli;
+    #$pId = $input ['playerId'];
+	$pId = $_GET['playerId'];//swstos elegxos
+	print "".$pId;
+    $sql = 'SELECT username,playerId FROM players WHERE playerId = ?';
+    $st = $mysqli->prepare($sql);
+    $st->bind_param('i',$pId);
+    $st->execute();
+    $res = $st->get_result();
+	if (isset($_GET['playerId'])) { //grammh 25 me 29
+    echo $_GET['playerId'];
+} else {
+    // Fallback behaviour goes here
+}
+    header('Content-type: application/json');
+    print json_encode($res->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
+}
 
-function show_user($playerid) {
+
+
+
+
+/*function show_user($input) {
 	global $mysqli;
-	$sql = 'select username,playerId from players where   = ?';
+	 
+	$sql = " SELECT username,playerId from players WHERE playerId = ?";
 	$st = $mysqli->prepare($sql);
-	$st->bind_param('i',$playerid);
+	$st->bind_param('i',$input);
 	$st->execute();
 	$res = $st->get_result();
 	header('Content-type: application/json');
 	print json_encode($res->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
-}
+}*/
 
 
 
@@ -102,14 +126,6 @@ function handle_user($method, $playerid, $input) {
 	} else if($method=='POST') {
         set_user($input);
     }
-	global $mysqli;
-	$sql='select count(*) as num from players';
-	$sw=$mysqli->prepare($sql);
-	$sw->execute();
-	$req=$sw->get_result();
-	$res=$req->fetch_assoc();
-	print "result:".$res;
-	
 }
 
 ?>
