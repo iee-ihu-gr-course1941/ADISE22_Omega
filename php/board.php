@@ -54,7 +54,11 @@ function reset_game(){
 
 
 
-//εμφανιζει τα φυλλα που εχουν οι παικτες
+
+
+
+
+//εμφανιζει τα φυλλα που εχουν οι παικτες να δω λιγο την κληση σε αλλες μεθοδους
 function show_cardgame($ttable){
 
     global $mysqli;
@@ -65,7 +69,11 @@ function show_cardgame($ttable){
     $st->execute();
     $res=$st ->get_result();
 	
-	
+	$sql = 'SELECT p_turn AS tr FROM players WHERE playerid = 1';
+	$sw = $mysqli -> prepare($sql);
+	$req = $sw -> execute();
+	$req = $sw -> get_result();
+	$rew = $req -> fetch_assoc();
 	
 	
 
@@ -74,34 +82,46 @@ function show_cardgame($ttable){
 
 }
 
-//τραβαει καρτα
+//τραβαει καρτα και μπαινει στο χερι του αντιστοιχου παικτη
 function draw_card(){
 global $mysqli;
 
-$sql='SELECT cardid from clonedeck ORDER BY RAND() LIMIT 1 ';
+	$sql='SELECT cardid from clonedeck ORDER BY RAND() LIMIT 1 ';
     $sq=$mysqli->prepare($sql);
     $sq->execute();
     $req=$sq ->get_result();
     $row=$req -> fetch_assoc();
+	$result = mysqli_query($mysqli,$sql);
+	while($row = mysqli_fetch_array($result)) { // it works
+    echo "Card random id :\n".$row['cardid']; 
+	} 
 
-$sql = 'SELECT playerid FROM players WHERE turn = 1';
+	$sql = 'SELECT playerId FROM players WHERE p_turn = 1';
 	$sw = $mysqli -> prepare($sql);
 	$sw -> execute();
 	$rew = $sw -> get_result();
 	$res = $rew -> fetch_assoc();
+	$result = mysqli_query($mysqli,$sql);
+	while($players = mysqli_fetch_array($result)) { // it works
+    echo "Player turn :\n".$players['playerId']; 
+	}
 
-if ($res['playerid'==1]){
-$sql = 'INSERT INTO hand (playerid,cardid) VALUES (1,?)';
+	isset($players['playerId']);
+	
+	 //μεχρι εδω δουλευει
+
+if ($players['playerId'==1]){
+$sql = 'INSERT INTO hand (playerId,cardid) VALUES (1,?)';
 }else{
-    $sql = 'INSERT INTO hand (playerid,cardid) VALUES (1,?)';   
+    $sql = 'INSERT INTO hand (playerid,cardid) VALUES (0,?)';   
     }
 
     $sp=$mysqli->prepare($sql);
     $sp ->bind_param('i', $row['cardid']);
     $sp ->execute();
 
-    }
-
+    
+}
 
 
 
