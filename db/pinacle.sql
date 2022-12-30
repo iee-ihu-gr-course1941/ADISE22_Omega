@@ -22,7 +22,7 @@ PRIMARY KEY (cardId)
 
 CREATE TABLE game_status (
 g_status enum('not active','initialized','started','
-ended','aborded') NOT NULL DEFAULT 'not active',
+ended','aborted') NOT NULL DEFAULT 'not active',
 playerId TINYINT(4) DEFAULT NULL,
 result enum('user1','user2') DEFAULT NULL,
 last_change timestamp NULL DEFAULT NULL
