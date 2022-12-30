@@ -82,60 +82,73 @@ function show_cardgame($ttable){
 
 }
 
-//τραβαει καρτα και μπαινει στο χερι του αντιστοιχου παικτη
+//τραβαει καρτα και μπαινει στο χερι του αντιστοιχου παικτη θελει δουλεια
+//μαλλον θελει με post μεθοδο
+
 function draw_card(){
 global $mysqli;
 
-	$sql='SELECT cardid from clonedeck ORDER BY RAND() LIMIT 1 ';
+	$sql='SELECT cardId from clonedeck ORDER BY RAND() LIMIT 1 ';
     $sq=$mysqli->prepare($sql);
     $sq->execute();
     $req=$sq ->get_result();
     $row=$req -> fetch_assoc();
 	$result = mysqli_query($mysqli,$sql);
-	while($row = mysqli_fetch_array($result)) { // it works
-    echo "Card random id :\n".$row['cardid']; 
-	} 
+	 
+	$random=mysqli_fetch_array($result);
+	$card=$random['cardId'];
+	
+	print "Random card \n".$card;
 
-	$sql = 'SELECT playerId FROM players WHERE p_turn = 1';
+	$sql = 'SELECT playerId FROM players WHERE p_turn = 0';
 	$sw = $mysqli -> prepare($sql);
 	$sw -> execute();
 	$rew = $sw -> get_result();
 	$res = $rew -> fetch_assoc();
 	$result = mysqli_query($mysqli,$sql);
-	while($players = mysqli_fetch_array($result)) { // it works
-    echo "Player turn :\n".$players['playerId']; 
-	}
-
-	isset($players['playerId']);
 	
-	 //μεχρι εδω δουλευει
+	$players=mysqli_fetch_array($result);
+	$pid=$players['playerId'];
+	
+	print "Player turn \n".$pid;
 
-if ($players['playerId'==1]){
-$sql = 'INSERT INTO hand (playerId,cardid) VALUES (1,?)';
+if ($pid==1){
+$sql = 'INSERT INTO hand (playerId,cardId) VALUES (1,?)';
 }else{
-    $sql = 'INSERT INTO hand (playerid,cardid) VALUES (0,?)';   
+    $sql = 'INSERT INTO hand (playerid,cardId) VALUES (2,?)';   
     }
 
     $sp=$mysqli->prepare($sql);
-    $sp ->bind_param('i', $row['cardid']);
+    $sp ->bind_param('i',$card);
     $sp ->execute();
-
+	
+	
+	
+	$sql = 'call playerTurn()';
+    $st = $mysqli->prepare($sql);
+    $st -> execute();
+	$ro=$st->get_result();
     
 }
 
 
 
 //θελει την συνεχεια
-function show_game($ttable){
-global $mysqli;
-$sql='SELECT cardcode,playerid from hand INNER JOIN carddeck WHERE hand.cardid=carddeck.cardid';
-$st=$mysqli->prepare($sql);
-$st -> execute();
-$res=$st-> get_result();
+function show_game($ttable) { //SELECT tou hand, kai tou paixti me id 1 kai ta gurname sgia emfanisi
+	global $mysqli;
+	$sql = 'SELECT cardCode, playerId FROM hand INNER JOIN carddeck WHERE hand.cardid = carddeck.cardid';
+	$st = $mysqli -> prepare($sql);
+	$st -> execute();
+	$res = $st -> get_result();
 
+	$sql = 'SELECT turn AS tr FROM players WHERE playerid = 1';
+	$sw = $mysqli -> prepare($sql);
+	$req = $sw -> execute();
+	$req = $sw -> get_result();
+	$rew = $req -> fetch_assoc();
 
-
-
+	header('Content-type: application/json');
+	print json_encode(array($res->fetch_all(MYSQLI_ASSOC), $ttable, $rew['tr']), JSON_PRETTY_PRINT);
 }
 
 
