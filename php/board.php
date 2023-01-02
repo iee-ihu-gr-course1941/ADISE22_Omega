@@ -113,67 +113,66 @@ function draw_card($id)
 
 /*function playcard($id)
 {
-	if (!isset($id['playerId'])) {
-		header("HTTP/1.1 400 Bad Request");
-		print json_encode(['errormesg' => "NO PLAYER ID GIVEN"]);
-		exit;
-	}else{
-		header("HTTP/1.1 400 Bad Request");
-		print json_encode(['errormesg' => "Player id was given"]);
-		header("HTTP/1.1 201 created");
-	}
+if (!isset($id['playerId'])) {
+header("HTTP/1.1 400 Bad Request");
+print json_encode(['errormesg' => "NO PLAYER ID GIVEN"]);
+exit;
+}else{
+header("HTTP/1.1 400 Bad Request");
+print json_encode(['errormesg' => "Player id was given"]);
+header("HTTP/1.1 201 created");
+}
+/*if (!isset($selectedcardtoplay['cardId'])) {
+header("HTTP/1.1 400 Bad Request");
+print json_encode(['errormesg' => "NO PLAYER ID GIVEN"]);
+exit;
+}*/
 
-	/*if (!isset($selectedcardtoplay['cardId'])) {
-		header("HTTP/1.1 400 Bad Request");
-		print json_encode(['errormesg' => "NO PLAYER ID GIVEN"]);
-		exit;
-	}*/
-
-	//global $mysqli;
-	//$pId = $id;
-	//$cardtoplay = $selectedcardtoplay;
-	//$sql = 'SELECT cardId from hand WHERE playerId=?';
-	//$stmt = $mysqli->prepare($sql);
-	//$stmt->bind_param('i', $pId);
-	//$stmt->execute();
-	//$result = $stmt->get_result();
-
-
-	/*while ($row = mysqli_fetch_array($result)) {
-
-		$selectedcard = $row;
-		echo "\n Selected card: " . $selectedcard['cardId'];
-		$card = intval($selectedcard[$cardtoplay]);
-		echo gettype($card) . "\n";
-		echo "The card that you want to play is: \n" . $card;
-
-		/*$sql = 'INSERT INTO discarded_cards (cardId) VALUES (?,?)';
-		$stmt = $mysqli->prepare($sql);
-		$stmt->bind_param('ii', $pId, $card);
-		$stmt->execute();
-		$sql = 'DELETE FROM clonedeck where cardId = ? ';
-		$stmt = $mysqli->prepare($sql);
-		$stmt->bind_param('i', $card);
-		$stmt->execute();*/
+//global $mysqli;
+//$pId = $id;
+//$cardtoplay = $selectedcardtoplay;
+//$sql = 'SELECT cardId from hand WHERE playerId=?';
+//$stmt = $mysqli->prepare($sql);
+//$stmt->bind_param('i', $pId);
+//$stmt->execute();
+//$result = $stmt->get_result();
 
 
-		//header('Content-type: application/json');
-	//	print json_encode(array($result->fetch_all(MYSQLI_ASSOC)), JSON_PRETTY_PRINT);
+/*while ($row = mysqli_fetch_array($result)) {
+$selectedcard = $row;
+echo "\n Selected card: " . $selectedcard['cardId'];
+$card = intval($selectedcard[$cardtoplay]);
+echo gettype($card) . "\n";
+echo "The card that you want to play is: \n" . $card;
+/*$sql = 'INSERT INTO discarded_cards (cardId) VALUES (?,?)';
+$stmt = $mysqli->prepare($sql);
+$stmt->bind_param('ii', $pId, $card);
+$stmt->execute();
+$sql = 'DELETE FROM clonedeck where cardId = ? ';
+$stmt = $mysqli->prepare($sql);
+$stmt->bind_param('i', $card);
+$stmt->execute();*/
 
-	//}
+
+//header('Content-type: application/json');
+//	print json_encode(array($result->fetch_all(MYSQLI_ASSOC)), JSON_PRETTY_PRINT);
+
+//}
 
 
 
 
-	function playtest ($input){
-		global $mysqli;
-        $sql = 'call playerTurn()';
-        $stmt = $mysqli->prepare($sql);
-		$stmt -> execute();
-	
-	
-		echo "Method started";
-	
+function playtest($input)
+{
+
+	global $mysqli;
+	$sql = 'call playerTurn()';
+	$stmt = $mysqli->prepare($sql);
+	$stmt->execute();
+
+
+	echo "Method started";
+
 	global $mysqli;
 	if (!isset($input['cardCode']) || $input['cardCode'] == '') {
 		header("HTTP/1.1 400 Bad Request");
@@ -183,24 +182,25 @@ function draw_card($id)
 	$cardplay = $input['cardCode'];
 	$sql = 'DELETE FROM hand WHERE cardId IN (SELECT hand.cardId FROM hand INNER JOIN deck on deck.cardId = hand.cardId INNER JOIN players on hand.playerId = players.playerId WHERE deck.cardCode = ? AND p_turn = 0) LIMIT 1';
 	$stmt = $mysqli->prepare($sql);
-	$stmt->bind_param('s',$cardplay);
+	$stmt->bind_param('s', $cardplay);
 	$stmt->execute();
 
 	$sql = 'INSERT INTO discarded_cards(cardCode) VALUES(?)';
-	$stmt = $mysqli -> prepare($sql);
-    $stmt -> bind_param('s',$cardplay);
-	$stmt-> execute();
+	$stmt = $mysqli->prepare($sql);
+	$stmt->bind_param('s', $cardplay);
+	$stmt->execute();
 
+	/*
 	$sql = 'SELECT cardCode FROM discarded_cards WHERE number = (SELECT MAX(number) FROM discarded_cards)';
-	$stmt= $mysqli -> prepare($sql);
-	$stmt -> execute();
-	$result = $stmt -> get_result();
-	$ren = $result -> fetch_assoc();
+	$stmt = $mysqli->prepare($sql);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$ren = $result->fetch_assoc();
+*/
+	//header('Content-type: application/json');
+	//print json_encode($result->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
 
-	header('Content-type: application/json');
-	print json_encode($result->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
-
-	}
+}
 
 
 
