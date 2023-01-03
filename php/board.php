@@ -111,57 +111,6 @@ function draw_card($id)
 }
 
 
-/*function playcard($id)
-{
-if (!isset($id['playerId'])) {
-header("HTTP/1.1 400 Bad Request");
-print json_encode(['errormesg' => "NO PLAYER ID GIVEN"]);
-exit;
-}else{
-header("HTTP/1.1 400 Bad Request");
-print json_encode(['errormesg' => "Player id was given"]);
-header("HTTP/1.1 201 created");
-}
-/*if (!isset($selectedcardtoplay['cardId'])) {
-header("HTTP/1.1 400 Bad Request");
-print json_encode(['errormesg' => "NO PLAYER ID GIVEN"]);
-exit;
-}*/
-
-//global $mysqli;
-//$pId = $id;
-//$cardtoplay = $selectedcardtoplay;
-//$sql = 'SELECT cardId from hand WHERE playerId=?';
-//$stmt = $mysqli->prepare($sql);
-//$stmt->bind_param('i', $pId);
-//$stmt->execute();
-//$result = $stmt->get_result();
-
-
-/*while ($row = mysqli_fetch_array($result)) {
-$selectedcard = $row;
-echo "\n Selected card: " . $selectedcard['cardId'];
-$card = intval($selectedcard[$cardtoplay]);
-echo gettype($card) . "\n";
-echo "The card that you want to play is: \n" . $card;
-/*$sql = 'INSERT INTO discarded_cards (cardId) VALUES (?,?)';
-$stmt = $mysqli->prepare($sql);
-$stmt->bind_param('ii', $pId, $card);
-$stmt->execute();
-$sql = 'DELETE FROM clonedeck where cardId = ? ';
-$stmt = $mysqli->prepare($sql);
-$stmt->bind_param('i', $card);
-$stmt->execute();*/
-
-
-//header('Content-type: application/json');
-//	print json_encode(array($result->fetch_all(MYSQLI_ASSOC)), JSON_PRETTY_PRINT);
-
-//}
-
-
-
-
 function playtest($input)
 {
 
@@ -190,19 +139,40 @@ function playtest($input)
 	$stmt->bind_param('s', $cardplay);
 	$stmt->execute();
 
-	/*
+	
 	$sql = 'SELECT cardCode FROM discarded_cards WHERE number = (SELECT MAX(number) FROM discarded_cards)';
 	$stmt = $mysqli->prepare($sql);
 	$stmt->execute();
 	$result = $stmt->get_result();
-	$ren = $result->fetch_assoc();
-*/
-	//header('Content-type: application/json');
-	//print json_encode($result->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
+	//$ren = $result->fetch_assoc();
+
+	header('Content-type: application/json');
+	print json_encode($result->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
 
 }
 
+ 
 
+
+function play3cards($input1,$input2,$input3){
+	global $mysqli;
+	
+	$card1 = $input1;
+	$card2 = $input2;
+	$card3 = $input3;
+
+	echo "TESTING CARD 1: ". $card1 . "\n";
+	echo "TESTING CARD 2 " . $card2 . "\n";
+	echo "TESTING CARD 3:" . $card3 . "\n";
+	
+
+	$sql = 'CALL play3samecards(?,?,?)';
+	$stmt = $mysqli->prepare($sql);
+	$stmt->bind_param('sss',$card1,$card2,$card3);
+	$stmt->execute();
+
+
+}
 
 
 function handle_game($method)
