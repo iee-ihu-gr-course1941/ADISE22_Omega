@@ -1,4 +1,4 @@
-players CREATE TABLE players (
+CREATE TABLE players (
 username VARCHAR(20) DEFAULT NULL,
 playerId TINYINT(4) AUTO_INCREMENT,
 token VARCHAR(100) DEFAULT NULL,
