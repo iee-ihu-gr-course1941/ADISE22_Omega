@@ -139,7 +139,7 @@ function playtest($input)
 	$stmt->bind_param('s', $cardplay);
 	$stmt->execute();
 
-	
+
 	$sql = 'SELECT cardCode FROM discarded_cards WHERE number = (SELECT MAX(number) FROM discarded_cards)';
 	$stmt = $mysqli->prepare($sql);
 	$stmt->execute();
@@ -151,44 +151,103 @@ function playtest($input)
 
 }
 
- 
 
 
-function play3cards($input1,$input2,$input3){
+
+function play3cards($input1, $input2, $input3)
+{
 	global $mysqli;
-	
+
 	$card1 = $input1;
 	$card2 = $input2;
 	$card3 = $input3;
 
-	echo "TESTING CARD 1: ". $card1 . "\n";
+	echo "TESTING CARD 1: " . $card1 . "\n";
 	echo "TESTING CARD 2 " . $card2 . "\n";
 	echo "TESTING CARD 3:" . $card3 . "\n";
-	
 
 	$sql = 'CALL play3samecards(?,?,?)';
 	$stmt = $mysqli->prepare($sql);
-	$stmt->bind_param('sss',$card1,$card2,$card3);
-	$stmt->execute();
-
-
+	$stmt->bind_param('sss', $card1, $card2, $card3);
+	if ($stmt->execute()) {
+		header('HTTP/1.1 201 Created');
+		$stmt->close();
+	} else {
+		print $stmt->error;
+		echo "CHOOSE CARDS OF THE SAME VALUE!";
+		header('HTTP/1.1 500 Internal Server Error');
+		return -1;
+	}
+	 
 }
 
 
-function handle_game($method)
+function play4cards($input1, $input2, $input3, $input4)
 {
 	global $mysqli;
-	if ($method == 'GET') {
-		$sql = 'SELECT cardCode FROM cardtable WHERE number = (SELECT MAX(number) FROM cardtable)';
-		$sm = $mysqli->prepare($sql);
-		$sm->execute();
-		$rem = $sm->get_result();
-		$ren = $rem->fetch_assoc();
-		show_game($ren['cardCode']);
-	} else if ($method == 'POST') {
-		reset_game();
+
+	$card1 = $input1;
+	$card2 = $input2;
+	$card3 = $input3;
+	$card4 = $input4;
+
+	echo "YOU HAVE SELECTED CARD 1: ". $card1 . "\n";
+	echo "YOU HAVE SELECTED CARD 2 " . $card2 . "\n";
+	echo "YOU HAVE SELECTED CARD 3:" . $card3 . "\n";
+	echo "YOU HAVE SELECTED CARD 4:" . $card4 . "\n";
+
+	$sql = 'CALL play4samecards(?,?,?,?)';
+	$stmt = $mysqli->prepare($sql);
+	$stmt->bind_param('ssss', $card1, $card2, $card3, $card4);
+	if ($stmt->execute()) {
+		$stmt->close();
+		header('HTTP/1.1 201 Created');
+	} else {
+		print $stmt->error;
+		echo "CHOOSE CARDS OF THE SAME VALUE!";
+		header('HTTP/1.1 500 Internal Server Error');
+		return -1;
 	}
+
+	global $mysqli;
+	$sql = 'call playerTurn()';
+	$st = $mysqli->prepare($sql);
+	$st->execute();
+
 }
+
+
+function playsequence($input1, $input2, $input3, $input4, $input5)
+{
+
+	global $mysqli;
+
+	$card1 = $input1;
+	$card2 = $input2;
+	$card3 = $input3;
+	$card4 = $input4;
+	$card5 = $input5;
+
+	echo "YOU HAVE SELECTED CARD 1: ". $card1 . "\n";
+	echo "YOU HAVE SELECTED CARD 2 " . $card2 . "\n";
+	echo "YOU HAVE SELECTED CARD 3:" . $card3 . "\n";
+	echo "YOU HAVE SELECTED CARD 4:" . $card4 . "\n";
+	echo "YOU HAVE SELECTED CARD 5:" . $card5 . "\n";
+
+	$sql = 'CALL sequenceof5cards(?,?,?,?,?)';
+	$stmt = $mysqli->prepare($sql);
+	$stmt->bind_param('sssss', $card1, $card2, $card3, $card4,$card5);
+	$stmt->execute();
+
+	$sql = 'call playerTurn()';
+	$st = $mysqli->prepare($sql);
+	$st->execute();
+
+
+
+
+}
+
 
 function pass()
 {
@@ -203,7 +262,7 @@ function pass()
 	$rem = $sm->get_result();
 	$ren = $rem->fetch_assoc();
 
-	show_game($ren['cardCode']);
+	
 }
 
 
