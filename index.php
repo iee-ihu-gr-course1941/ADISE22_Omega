@@ -186,14 +186,6 @@ if ($resource == "drawcard") {
 }
 
 
-if ($resource == "showgame") {
-	if ($method == "POST") {
-		require_once "php/board.php";
-		show_game($requestBody);
-	}
-}
-
-
 if ($resource == "pass") {
 	if ($method == "PUT") {
 		require_once "php/board.php";
