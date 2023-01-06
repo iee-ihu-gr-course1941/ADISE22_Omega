@@ -36,3 +36,41 @@ function fill_board_by_data(data){
     }    
 }
 
+unction fill_game() {
+    $.ajax({
+        type: 'DELETE',
+        url: "index.php/gamestatus/",
+        
+    });
+}
+
+function resetgame(){
+    document.getElementById('success').innerHTML='new game has started'<br>
+    $.ajax({
+        type:'DELETE',
+        url: "index.php/game/",
+        success: fill_game_by_data
+    });
+
+}
+
+
+function drawcard(){
+    $.ajax({
+    type:'POST',
+    url: "pinacle.php/game/draw",
+    success:fill_game_by_data
+    });
+
+}
+
+
+ 
+function pass(){
+    if(player.turn==1)
+    $.ajax({
+        url: "pinacle.php/game/play/",
+        method:'PUT'
+        
+    });
+}
