@@ -55,9 +55,16 @@ if ($resource == "gamestatus") {
 		require_once "php/board.php";
 		reset_game();
 	}
-
-
 }
+
+
+if ($resource == "playcard") {
+	if ($method == "POST") {
+		require_once "php/board.php";
+		playcard($requestBody);
+	}
+}
+
 
 
 if ($resource == "play3cards") {
@@ -169,14 +176,7 @@ if ($resource == "cards") {
 	}
 }
 
-if ($resource == "showcards") {
-	if ($method == "GET") {
-		require_once "php/board.php";
-		show_cardgame($requestBody);
-		 
-	}
-}
-
+ 
 
 if ($resource == "drawcard") {
 	if ($method == "POST") {
