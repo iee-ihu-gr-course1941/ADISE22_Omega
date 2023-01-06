@@ -9,16 +9,6 @@ $request = explode('/', trim($_SERVER['PATH_INFO'], '/'));
 $resource = $request[0];
 
 print_r($requestBody);
-//$subresource = $request[1];
-
-#print "\n METHOD " . $method .  "\n";
-
-#print "\n REQUEST_BODY \n";
-#print_r($requestBody);
-#print "\n REQUEST RESOURCE\n";
-#print_r($resource);
-
-
 
 if ($resource == "newgame") {
 	if ($method == "POST") {
@@ -50,83 +40,119 @@ if ($resource == "players") {
 			show_user($id);
 		} else {
 			show_users();
-		}	
+		}
 	}
 }
 
 //Resource for game
 if ($resource == "gamestatus") {
 
-	if ($method=="GET"){
+	if ($method == "GET") {
 		require_once "php/board.php";
 		show_status();
-	}if ($method=="DELETE") {
+	}
+	if ($method == "DELETE") {
 		require_once "php/board.php";
 		reset_game();
 	}
-	
-		
-}
 
-if ($resource=="playtest"){
-	if ($method=="POST"){
-		require_once "php/board.php";
-		playtest($requestBody);
-	}
+
 }
 
 
-if ($resource=="play3cards"){
-	if ($method=="POST"){
+if ($resource == "play3cards") {
+	if ($method == "POST") {
 		require_once "php/board.php";
-		//$post_data = array();
-		//$posted_data = json_decode($_POST['cardCode'], true);
-		//$requestBody = $post_data;
-		//play3cards($requestBody);
+
 		$card1 = "";
 		$card2 = "";
 		$card3 = "";
-		$post_data=array();
-		$post_data = json_decode($_POST['json'], true);
+		//$post_data=array();
+		//$post_data = json_decode($_POST['json'], true);
+		$post_data = json_decode(json_encode($requestBody), true);
 		$requestBody[] = $post_data;
 		///print_r($requestBody);
 		$card1 = implode($requestBody[0]);
 		$card2 = implode($requestBody[1]);
-		$card3 = implode ($requestBody[2]);
-		//echo implode("card1 \n",$requestBody[0]); 
-		//echo implode("card2 \n",$requestBody[1]);
-		//echo  implode("card3 \n",$requestBody[2]);
+		$card3 = implode($requestBody[2]);
 
 
-		echo "card 1: \n " .$card1."\n";
-		echo "card 2: \n " . $card2."\n";
-		echo "card 3: \n " . $card3."\n";
 
-		play3cards($card1,$card2,$card3);
+		echo "card 1: \n " . $card1 . "\n";
+		echo "card 2: \n " . $card2 . "\n";
+		echo "card 3: \n " . $card3 . "\n";
+
+		play3cards($card1, $card2, $card3);
 
 	}
+}
 
 
+if ($resource == "play4cards") {
+	if ($method == "POST") {
+		require_once "php/board.php";
+
+		$card1 = "";
+		$card2 = "";
+		$card3 = "";
+		$card4 = "";
+		//$post_data=array();
+		//$post_data = json_decode($_POST['json'], true);
+		$post_data = json_decode(json_encode($requestBody), true);
+		$requestBody[] = $post_data;
+		///print_r($requestBody);
+		$card1 = implode($requestBody[0]);
+		$card2 = implode($requestBody[1]);
+		$card3 = implode($requestBody[2]);
+		$card4 = implode($requestBody[3]);
+
+
+		echo "card 1: \n " . $card1 . "\n";
+		echo "card 2: \n " . $card2 . "\n";
+		echo "card 3: \n " . $card3 . "\n";
+		echo "card 3: \n " . $card3 . "\n";
+
+		play4cards($card1, $card2, $card3, $card4);
+
+	}
+}
+
+
+if ($resource == "playsequence") {
+	if ($method == "POST") {
+		require_once "php/board.php";
+
+		$card1 = "";
+		$card2 = "";
+		$card3 = "";
+		$card4 = "";
+		$card5 = "";
+
+		//$post_data=array();
+		//$post_data = json_decode($_POST['json'], true);
+		$post_data = json_decode(json_encode($requestBody), true);
+		$requestBody[] = $post_data;
+		///print_r($requestBody);
+		$card1 = implode($requestBody[0]);
+		$card2 = implode($requestBody[1]);
+		$card3 = implode($requestBody[2]);
+		$card4 = implode($requestBody[3]);
+		$card4 = implode($requestBody[4]);
+
+
+		echo "card 1: \n " . $card1 . "\n";
+		echo "card 2: \n " . $card2 . "\n";
+		echo "card 3: \n " . $card3 . "\n";
+		echo "card 3: \n " . $card3 . "\n";
+		echo "card 3: \n " . $card4 . "\n";
+
+		playsequence($card1, $card2, $card3, $card4, $card5);
+
+	}
 }
 
 
 
-
-
-
-
-
-/*if ($resource=="play3cards"){
-	if ($method=="POST"){
-		require_once "php/board.php";
-		$posted_data = array();
-    if (!empty($_POST['json'])) {
-        $posted_data = json_decode($_POST['json'], true);
-			play3cards($posted_data);
-    }
-	}
-
-}*/
 
 
 //Resource for cards
@@ -147,7 +173,7 @@ if ($resource == "showcards") {
 	if ($method == "GET") {
 		require_once "php/board.php";
 		show_cardgame($requestBody);
-		echo nl2br("Players with theese cards");
+		 
 	}
 }
 
@@ -168,21 +194,20 @@ if ($resource == "showgame") {
 }
 
 
+if ($resource == "pass") {
+	if ($method == "PUT") {
+		require_once "php/board.php";
+		pass();
 
-
-
-
-//τελος γυρου και αλλγη σειρας
-if ($resource == "endturn") {
-	if ($method == "POST") {
-		require_once "php/game.php";
 	}
 }
 
-if ($resource == "pass") {
-	if ($method == "POST") {
+if ($resource == "endturn") {
+	if ($method == "PUT") {
+		require_once "index.php/board.php";
 		pass();
 	}
+
 }
 
 ?>
