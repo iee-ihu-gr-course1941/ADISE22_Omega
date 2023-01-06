@@ -25,7 +25,9 @@ function show_user($id)
 	if (isset($_GET['playerId'])) {
 		echo $_GET['playerId'];
 	} else {
-
+		print $st->error;
+		header('HTTP/1.1 500 Internal Server Error');
+		return -1;
 	}
 	header('Content-type: application/json');
 	print json_encode($res->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
@@ -75,7 +77,7 @@ function add_user($input)
 	global $mysqli;
 	$sql_query = "SELECT COUNT(*) AS num FROM players WHERE username IS NOT NULL";
 	$result = mysqli_query($mysqli, $sql_query);
-	$row = $result->fetch_assoc(); //epistrefh apotelesma diavazei grammes
+	$row = $result->fetch_assoc(); 
 
 	$id = 0;
 	if ($row['num'] < 2) {
