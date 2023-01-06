@@ -1,5 +1,7 @@
 <?php
+use LDAP\Result;
 
+require_once "php/game.php";
 //works
 function show_status()
 {
@@ -103,24 +105,19 @@ function draw_card($id)
 
 	}
 
-
-
 	header('Content-type: application/json');
 	print json_encode(array($result->fetch_all(MYSQLI_ASSOC)), JSON_PRETTY_PRINT);
 
 }
 
 
-function playtest($input)
+function playcard($input)
 {
 
 	global $mysqli;
 	$sql = 'call playerTurn()';
 	$stmt = $mysqli->prepare($sql);
 	$stmt->execute();
-
-
-	echo "Method started";
 
 	global $mysqli;
 	if (!isset($input['cardCode']) || $input['cardCode'] == '') {
@@ -146,6 +143,8 @@ function playtest($input)
 	$result = $stmt->get_result();
 	//$ren = $result->fetch_assoc();
 
+	update_game_status();
+
 	header('Content-type: application/json');
 	print json_encode($result->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
 
@@ -156,7 +155,13 @@ function playtest($input)
 
 function play3cards($input1, $input2, $input3)
 {
+
 	global $mysqli;
+
+	$sql = 'call playerTurn()';
+	$stmt = $mysqli->prepare($sql);
+	$stmt->execute();
+
 
 	$card1 = $input1;
 	$card2 = $input2;
@@ -169,7 +174,10 @@ function play3cards($input1, $input2, $input3)
 	$sql = 'CALL play3samecards(?,?,?)';
 	$stmt = $mysqli->prepare($sql);
 	$stmt->bind_param('sss', $card1, $card2, $card3);
-	if ($stmt->execute()) {
+	$stmt->execute();
+	$result=$stmt->get_result();
+
+	/*if ($stmt->execute()) {
 		header('HTTP/1.1 201 Created');
 		$stmt->close();
 	} else {
@@ -177,7 +185,9 @@ function play3cards($input1, $input2, $input3)
 		echo "CHOOSE CARDS OF THE SAME VALUE!";
 		header('HTTP/1.1 500 Internal Server Error');
 		return -1;
-	}
+	}*/
+	header('Content-type: application/json');
+	print json_encode($result->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
 	 
 }
 
@@ -199,7 +209,9 @@ function play4cards($input1, $input2, $input3, $input4)
 	$sql = 'CALL play4samecards(?,?,?,?)';
 	$stmt = $mysqli->prepare($sql);
 	$stmt->bind_param('ssss', $card1, $card2, $card3, $card4);
-	if ($stmt->execute()) {
+	$stmt->execute();
+	$result=$stmt->get_result();
+	/*if ($stmt->execute()) {
 		$stmt->close();
 		header('HTTP/1.1 201 Created');
 	} else {
@@ -207,13 +219,15 @@ function play4cards($input1, $input2, $input3, $input4)
 		echo "CHOOSE CARDS OF THE SAME VALUE!";
 		header('HTTP/1.1 500 Internal Server Error');
 		return -1;
-	}
+	}*/
 
 	global $mysqli;
 	$sql = 'call playerTurn()';
 	$st = $mysqli->prepare($sql);
 	$st->execute();
 
+	header('Content-type: application/json');
+	print json_encode($result->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
 }
 
 
@@ -238,15 +252,19 @@ function playsequence($input1, $input2, $input3, $input4, $input5)
 	$stmt = $mysqli->prepare($sql);
 	$stmt->bind_param('sssss', $card1, $card2, $card3, $card4,$card5);
 	$stmt->execute();
+	$stmt->execute();
+	$result=$stmt->get_result();
 
 	$sql = 'call playerTurn()';
 	$st = $mysqli->prepare($sql);
 	$st->execute();
 
-
-
-
+	header('Content-type: application/json');
+	print json_encode($result->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
 }
+
+
+
 
 
 function pass()
