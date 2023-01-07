@@ -1,43 +1,59 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+
 <head>
-  <style>
-    table, tr, td {
-      border: 1px solid black;
-    }
-  </style>
+    <meta charset="utf-8" />
 
-  <script src="js/jquery-3.6.3.js"></script>
-  <script src="js/pinacle.js"></script>
-  <script type="text/javascript">
-  $(document).ready(function(){
-    $("#par").hide();
-    $("#div1").hide();
-    $("#btn2").hide();
-      $("#btn").click(function(){
-        $("#div1").show();
-            $("#btn").hide();
-            $("#btn2").show();
-    });
-  });
-  </script>
+    <!--css-->
+    <link rel="stylesheet" href="./css/style.css">
+
+    <!---jquery-->
+    <script src="jquery-3.6.3.js"></script>
+
+    <!--javascript-->
+    <script type="text/javascript" src="js/pinacle.js"></script>
+    <script type="text/javascript" src="js/players.js"></script>>
+
 </head>
+
 <body>
-
-<div id='div1'>
-
-  <input type="text" id="username">
-  
-
-<p id="par"> User added</p>
-</div>
-
-
-
-
-
-<button id="btn">Game Start</button>
-<button id="btn2"> Add user</button>
-
+    <div id="mainContainer">
+        <form class='form' id>
+            <div class='control'>
+                <h1>
+                    Sign In
+                </h1>
+            </div>
+            <div>
+                <input name='username' placeholder='Username' id="usrnm" type='text'>
+                <div class='bg-top'>
+                    <div class='bg-inner'></div>
+                </div>
+                <div class='bg-right'>
+                    <div class='bg-inner'></div>
+                </div>
+                <div class='bg'>
+                    <div class='bg-inner'></div>
+                </div>
+            </div>
+            <button id="btn2" type='button' onclick="login_to_game()">
+                <div class='bg-top'>
+                    <div class='bg-inner'></div>
+                </div>
+                <div class='bg-right'>
+                    <div class='bg-inner'></div>
+                </div>
+                <div class='bg'>
+                    <div class='bg-inner'></div>
+                </div>
+                <div class='text'>
+                    Log In
+                </div>
+            </button>
+        </form>
+        <div id="success"></div>
+    </div>
 </body>
+
+
+
 </html>
