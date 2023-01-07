@@ -1,7 +1,6 @@
 <?php
 require_once "php/dbconnect.php";
 
-#require_once "php/board.php";
 $method = $_SERVER['REQUEST_METHOD'];
 $requestBody = json_decode(file_get_contents('php://input'), true);
 
@@ -74,11 +73,10 @@ if ($resource == "play3cards") {
 		$card1 = "";
 		$card2 = "";
 		$card3 = "";
-		//$post_data=array();
-		//$post_data = json_decode($_POST['json'], true);
+		 
 		$post_data = json_decode(json_encode($requestBody), true);
 		$requestBody[] = $post_data;
-		///print_r($requestBody);
+		 
 		$card1 = implode($requestBody[0]);
 		$card2 = implode($requestBody[1]);
 		$card3 = implode($requestBody[2]);
@@ -103,11 +101,10 @@ if ($resource == "play4cards") {
 		$card2 = "";
 		$card3 = "";
 		$card4 = "";
-		//$post_data=array();
-		//$post_data = json_decode($_POST['json'], true);
+		 
 		$post_data = json_decode(json_encode($requestBody), true);
 		$requestBody[] = $post_data;
-		///print_r($requestBody);
+		 
 		$card1 = implode($requestBody[0]);
 		$card2 = implode($requestBody[1]);
 		$card3 = implode($requestBody[2]);
@@ -135,11 +132,10 @@ if ($resource == "playsequence") {
 		$card4 = "";
 		$card5 = "";
 
-		//$post_data=array();
-		//$post_data = json_decode($_POST['json'], true);
+		 
 		$post_data = json_decode(json_encode($requestBody), true);
 		$requestBody[] = $post_data;
-		///print_r($requestBody);
+		 
 		$card1 = implode($requestBody[0]);
 		$card2 = implode($requestBody[1]);
 		$card3 = implode($requestBody[2]);
@@ -178,6 +174,7 @@ if ($resource == "cards") {
 
  
 
+
 if ($resource == "drawcard") {
 	if ($method == "POST") {
 		require_once "php/board.php";
@@ -194,12 +191,29 @@ if ($resource == "pass") {
 	}
 }
 
-if ($resource == "endturn") {
-	if ($method == "PUT") {
-		require_once "index.php/board.php";
+if ($resource == "giveturn") {
+	if ($method == "POST") {
+		require_once "php/board.php";
 		pass();
 	}
 
 }
+
+if ($resource == "endturn") {
+	if ($method == "PUT") {
+		require_once "php/board.php";
+		pass();
+	}
+
+}
+
+if ($resource == "topcard") {
+	if ($method == "GET") {
+		require_once "php/board.php";
+		showtopcard();
+	}
+
+}
+
 
 ?>
