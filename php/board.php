@@ -35,6 +35,7 @@ function reset_game()
 	$sql = 'call card_deal()';
 	$st = $mysqli->prepare($sql);
 	$st->execute();
+
 	header('HTTP/1.1 204 No Content');
 
 }
@@ -79,7 +80,7 @@ function draw_card($id)
 		print json_encode(['errormesg' => "NO PLAYER ID GIVEN"]);
 		exit;
 	}
-	$pId = $id;
+	$pId = $id['playerId'];
 
 	$sql = 'SELECT cardId from clonedeck ORDER BY RAND() LIMIT 1 ';
 	$sq = $mysqli->prepare($sql);
@@ -115,9 +116,6 @@ function playcard($input)
 {
 
 	global $mysqli;
-	$sql = 'call playerTurn()';
-	$stmt = $mysqli->prepare($sql);
-	$stmt->execute();
 
 	global $mysqli;
 	if (!isset($input['cardCode']) || $input['cardCode'] == '') {
@@ -126,7 +124,7 @@ function playcard($input)
 		exit;
 	}
 	$cardplay = $input['cardCode'];
-	$sql = 'DELETE FROM hand WHERE cardId IN (SELECT hand.cardId FROM hand INNER JOIN deck on deck.cardId = hand.cardId INNER JOIN players on hand.playerId = players.playerId WHERE deck.cardCode = ? AND p_turn = 0) LIMIT 1';
+	$sql = 'DELETE FROM hand WHERE cardId IN (SELECT hand.cardId FROM hand INNER JOIN deck on deck.cardId = hand.cardId INNER JOIN players on hand.playerId = players.playerId WHERE deck.cardCode=? AND p_turn = 0) LIMIT 1';
 	$stmt = $mysqli->prepare($sql);
 	$stmt->bind_param('s', $cardplay);
 	$stmt->execute();
@@ -141,16 +139,30 @@ function playcard($input)
 	$stmt = $mysqli->prepare($sql);
 	$stmt->execute();
 	$result = $stmt->get_result();
-	//$ren = $result->fetch_assoc();
+	 
 
 	update_game_status();
+	$sql = 'call playerTurn()';
+	$stmt = $mysqli->prepare($sql);
+	$stmt->execute();
+
 
 	header('Content-type: application/json');
 	print json_encode($result->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
 
 }
 
+function showtopcard()
+{
+	global $mysqli;
+	$sql = 'SELECT cardCode FROM discarded_cards WHERE number = (SELECT MAX(number) FROM discarded_cards)';
+	$stmt = $mysqli->prepare($sql);
+	$stmt->execute();
+	$result = $stmt->get_result();
 
+	header('Content-type: application/json');
+	print json_encode($result->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
+}
 
 
 function play3cards($input1, $input2, $input3)
@@ -167,28 +179,16 @@ function play3cards($input1, $input2, $input3)
 	$card2 = $input2;
 	$card3 = $input3;
 
-	echo "TESTING CARD 1: " . $card1 . "\n";
-	echo "TESTING CARD 2 " . $card2 . "\n";
-	echo "TESTING CARD 3:" . $card3 . "\n";
+	echo "YOU HAVE SELECTED CARD  1: " . $card1 . "\n";
+	echo "YOU HAVE SELECTED CARD  2 " . $card2 . "\n";
+	echo "YOU HAVE SELECTED CARD  3:" . $card3 . "\n";
 
 	$sql = 'CALL play3samecards(?,?,?)';
 	$stmt = $mysqli->prepare($sql);
 	$stmt->bind_param('sss', $card1, $card2, $card3);
 	$stmt->execute();
-	$result=$stmt->get_result();
+	$result = $stmt->get_result();
 
-	/*if ($stmt->execute()) {
-		header('HTTP/1.1 201 Created');
-		$stmt->close();
-	} else {
-		print $stmt->error;
-		echo "CHOOSE CARDS OF THE SAME VALUE!";
-		header('HTTP/1.1 500 Internal Server Error');
-		return -1;
-	}*/
-	header('Content-type: application/json');
-	print json_encode($result->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
-	 
 }
 
 
@@ -201,7 +201,7 @@ function play4cards($input1, $input2, $input3, $input4)
 	$card3 = $input3;
 	$card4 = $input4;
 
-	echo "YOU HAVE SELECTED CARD 1: ". $card1 . "\n";
+	echo "YOU HAVE SELECTED CARD 1: " . $card1 . "\n";
 	echo "YOU HAVE SELECTED CARD 2 " . $card2 . "\n";
 	echo "YOU HAVE SELECTED CARD 3:" . $card3 . "\n";
 	echo "YOU HAVE SELECTED CARD 4:" . $card4 . "\n";
@@ -210,24 +210,9 @@ function play4cards($input1, $input2, $input3, $input4)
 	$stmt = $mysqli->prepare($sql);
 	$stmt->bind_param('ssss', $card1, $card2, $card3, $card4);
 	$stmt->execute();
-	$result=$stmt->get_result();
-	/*if ($stmt->execute()) {
-		$stmt->close();
-		header('HTTP/1.1 201 Created');
-	} else {
-		print $stmt->error;
-		echo "CHOOSE CARDS OF THE SAME VALUE!";
-		header('HTTP/1.1 500 Internal Server Error');
-		return -1;
-	}*/
-
-	global $mysqli;
-	$sql = 'call playerTurn()';
-	$st = $mysqli->prepare($sql);
-	$st->execute();
-
-	header('Content-type: application/json');
-	print json_encode($result->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
+	$result = $stmt->get_result();
+	 
+	
 }
 
 
@@ -242,7 +227,7 @@ function playsequence($input1, $input2, $input3, $input4, $input5)
 	$card4 = $input4;
 	$card5 = $input5;
 
-	echo "YOU HAVE SELECTED CARD 1: ". $card1 . "\n";
+	echo "YOU HAVE SELECTED CARD 1: " . $card1 . "\n";
 	echo "YOU HAVE SELECTED CARD 2 " . $card2 . "\n";
 	echo "YOU HAVE SELECTED CARD 3:" . $card3 . "\n";
 	echo "YOU HAVE SELECTED CARD 4:" . $card4 . "\n";
@@ -250,17 +235,15 @@ function playsequence($input1, $input2, $input3, $input4, $input5)
 
 	$sql = 'CALL sequenceof5cards(?,?,?,?,?)';
 	$stmt = $mysqli->prepare($sql);
-	$stmt->bind_param('sssss', $card1, $card2, $card3, $card4,$card5);
+	$stmt->bind_param('sssss', $card1, $card2, $card3, $card4, $card5);
 	$stmt->execute();
 	$stmt->execute();
-	$result=$stmt->get_result();
+	$result = $stmt->get_result();
 
 	$sql = 'call playerTurn()';
 	$st = $mysqli->prepare($sql);
 	$st->execute();
 
-	header('Content-type: application/json');
-	print json_encode($result->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
 }
 
 
@@ -280,7 +263,7 @@ function pass()
 	$rem = $sm->get_result();
 	$ren = $rem->fetch_assoc();
 
-	
+
 }
 
 
