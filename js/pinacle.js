@@ -11,96 +11,30 @@ var gameui ='<div class="container" id="mainContainer">'+
     ' <div id="colors_div"> </div>';
 //θα πρέπει να δημιουργητε το ui του παιχνιδιου
 
-
 $(function(){
-draw_empty_board();
-    $("#btn2").click(function(){
-        fill_board();
+    $("#btn2").click(login_to_game);
     });
-});
 
-function draw_empty_board() {
-    var t='<table id="card_deck">';
-    for(var i=0;i<1;i++) {
-        t += '<tr>';
-        for(var j=1;j<53;j++) {
-            t += '<td class="cardDeck" id="cardCode">' + j +'</td>';
-        }
-        t+='</tr>';
+
+
+
+function login_to_game(){
+    if($('#username').val()==''){
+        alert('No username given');
+        return;
     }
-    t+='</table>';
-    $('#div1').html(t);
-    }
-  
-
-function fill_board() {
-	$.ajax(
-        {url: "pinacle.php/cards/", 
-		success: $("#div1").text("hello") 
-        }
-    );
-}
-
-function fill_board_by_data(data){
-    for(var i=0;i<data.length;i++) {
-        var o = data[i];
-    }    
-}
-
-function fill_game() {
+    var txt = $('#username').val();
     $.ajax({
-        type: 'DELETE',
-        url: "index.php/gamestatus/",
+        url: "index.php/players/",
+        method : 'POST',
+        dataType : "json",
+        contentType : 'application/json',
+        data : JSON.stringify ({username : $('#username').val()}),
+        success : $("#par").show()
         
     });
 }
 
-function resetgame(){
-    document.getElementById('success').innerHTML='new game has started'<br>
-    $.ajax({
-        type:'DELETE',
-        url: "index.php/game/",
-        success: fill_game_by_data
-    });
-
-}
-
-
-function drawcard(){
-    $.ajax({
-    type:'POST',
-    url: "pinacle.php/game/draw",
-    success:fill_game_by_data
-    });
-
-}
-
-
- 
-function pass(){
-    if(player.turn==1)
-    $.ajax({
-        url: "pinacle.php/game/play/",
-        method:'PUT'
-        
-    });
-}
-
-function playcard(){
-    var card = document.getElementById("cardtype");
-    var selectedValue = card.options[card.selectedIndex].value;
-    if (selectedValue == "1card"){
-        $.ajax({
-            type: 'POST',
-            url: "index.php/playcard/",
-            data: JSON.stringify({
-                x: username.value
-            }), 
-        })
-   
-}
- }
- function generateGame() { //ftiaxnei to ui, kai kanei update info
-    document.getElementById('mainContainer').innerHTML = gameUI;
-    updateInfo();
+function login_result(data){
+    console.log(data);
 }
