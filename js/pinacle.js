@@ -16,6 +16,27 @@ $(function(){
     });
 
 
+   //kanei reset to paixnidi
+function resetgame(){
+    document.getElementById('success').innerHTML='new game has started'<br>
+    $.ajax({
+        type:'DELETE',
+        url: "index.php/game/",
+       
+    });
+
+} 
+
+
+//PASS
+function pass(){
+    if(player.turn==1)
+    $.ajax({
+        url: "pinacle.php/game/play/",
+        method:'PUT'
+        
+    });
+}
 
 
 function login_to_game(){
