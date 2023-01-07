@@ -1,4 +1,15 @@
-
+var gameui ='<div class="container" id="mainContainer">'+
+' <div style="text-align: center;">' +
+    ' <h1> <b>PINNACLE</b> </h1> </div>' +
+    ' <div id="game" style="text-align: center;"> <div id="playerOne">' +
+    ' <div id="playerOneName"> </div> <br> <table class="table" id="player1hand">' +
+    ' </table> <div id="btns" style="padding: 5px;">' +
+    ' <button type="button" onclick="pass()" disabled>Pass</button> ' +
+    '<select name="cars" id="cars"> <option value="1card" id="cardtype" ondblclick="">1card</option>  <option value="3samecards" onclick="">3cards</option> + <option value="4samecards">4cards</option> <option value="sequence">sequence</option></select>'
+    ' </div> <div class="col" id="playerTwo"> <div id="playerTwoName"></div> <br>' +
+    ' <table id="player2hand"> </table> <div id="success"></div>' +
+    ' <div id="colors_div"> </div>';
+//θα πρέπει να δημιουργητε το ui του παιχνιδιου
 
 
 $(function(){
@@ -36,7 +47,7 @@ function fill_board_by_data(data){
     }    
 }
 
-unction fill_game() {
+function fill_game() {
     $.ajax({
         type: 'DELETE',
         url: "index.php/gamestatus/",
@@ -73,4 +84,23 @@ function pass(){
         method:'PUT'
         
     });
+}
+
+function playcard(){
+    var card = document.getElementById("cardtype");
+    var selectedValue = card.options[card.selectedIndex].value;
+    if (selectedValue == "1card"){
+        $.ajax({
+            type: 'POST',
+            url: "index.php/playcard/",
+            data: JSON.stringify({
+                x: username.value
+            }), 
+        })
+   
+}
+ }
+ function generateGame() { //ftiaxnei to ui, kai kanei update info
+    document.getElementById('mainContainer').innerHTML = gameUI;
+    updateInfo();
 }
