@@ -53,7 +53,7 @@ function addPlayer() { //prosthiki tou player sto database
 
 function givePlayerValue(data) {
     players = data[0]; //dinei to data se mia metavliti player
-    generateGame(); //to data einai mia select * from players where name = username
+    generateGame(); 
 }
 
 
