@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS `clonedeck` (
   `cardId` tinyint(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table pinacle.clonedeck: ~21 rows (approximately)
+-- Dumping data for table pinacle.clonedeck: ~24 rows (approximately)
 INSERT INTO `clonedeck` (`card_number`, `cardCode`, `cardId`) VALUES
 	(11, '11D', 50),
 	(4, '4C', 30),
@@ -181,9 +181,9 @@ CREATE TABLE IF NOT EXISTS `discarded_cards` (
   `number` int(20) NOT NULL AUTO_INCREMENT,
   `cardCode` varchar(10) NOT NULL,
   PRIMARY KEY (`number`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table pinacle.discarded_cards: ~12 rows (approximately)
+-- Dumping data for table pinacle.discarded_cards: ~10 rows (approximately)
 INSERT INTO `discarded_cards` (`number`, `cardCode`) VALUES
 	(1, '8D'),
 	(3, '7D'),
@@ -191,12 +191,10 @@ INSERT INTO `discarded_cards` (`number`, `cardCode`) VALUES
 	(6, '8C'),
 	(7, '8C'),
 	(8, '7C'),
-	(30, '1C'),
-	(31, '1H'),
-	(32, '1S'),
-	(33, '1C'),
-	(34, '1H'),
-	(35, '1S');
+	(48, '1C'),
+	(49, '1D'),
+	(50, '1H'),
+	(51, '1S');
 
 -- Dumping structure for table pinacle.game_status
 CREATE TABLE IF NOT EXISTS `game_status` (
@@ -216,14 +214,13 @@ CREATE TABLE IF NOT EXISTS `hand` (
   `cardId` int(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table pinacle.hand: ~29 rows (approximately)
+-- Dumping data for table pinacle.hand: ~25 rows (approximately)
 INSERT INTO `hand` (`playerId`, `cardId`) VALUES
 	(1, 39),
 	(2, 33),
 	(2, 20),
 	(1, 19),
 	(1, 21),
-	(2, 27),
 	(2, 28),
 	(1, 44),
 	(1, 11),
@@ -243,14 +240,15 @@ INSERT INTO `hand` (`playerId`, `cardId`) VALUES
 	(1, 43),
 	(1, 47),
 	(1, 13),
-	(1, 1),
-	(1, 14),
-	(1, 27),
 	(1, 14);
 
 -- Dumping structure for procedure pinacle.play3samecards
 DELIMITER //
-CREATE PROCEDURE `play3samecards`(CAR1 VARCHAR(30),CAR2 VARCHAR(30),CAR3 VARCHAR(30))
+CREATE PROCEDURE `play3samecards`(
+	IN `CAR1` VARCHAR(30),
+	IN `CAR2` VARCHAR(30),
+	IN `CAR3` VARCHAR(30)
+)
 BEGIN
 DECLARE X1 INT;
 DECLARE X2 INT;
@@ -262,6 +260,39 @@ IF (X1=X2 AND X2=X3) THEN
 INSERT INTO discarded_cards (cardCode) VALUES ((SELECT cardCode FROM deck WHERE cardCode=CAR1));
 INSERT INTO discarded_cards (cardCode) VALUES ((SELECT cardCode FROM deck WHERE cardCode=CAR2));
 INSERT INTO discarded_cards (cardCode) VALUES ((SELECT cardCode FROM deck WHERE cardCode=CAR3));
+
+DELETE FROM hand WHERE cardId IN (SELECT hand.cardId FROM hand INNER JOIN deck on deck.cardId = hand.cardId INNER JOIN players on hand.playerId = players.playerId WHERE deck.cardCode = CAR1 AND p_turn = 0) LIMIT 1;
+DELETE FROM hand WHERE cardId IN (SELECT hand.cardId FROM hand INNER JOIN deck on deck.cardId = hand.cardId INNER JOIN players on hand.playerId = players.playerId WHERE deck.cardCode = CAR2 AND p_turn = 0) LIMIT 1;
+DELETE FROM hand WHERE cardId IN (SELECT hand.cardId FROM hand INNER JOIN deck on deck.cardId = hand.cardId INNER JOIN players on hand.playerId = players.playerId WHERE deck.cardCode = CAR3 AND p_turn = 0) LIMIT 1;
+
+END IF;
+END//
+DELIMITER ;
+
+-- Dumping structure for procedure pinacle.play4samecards
+DELIMITER //
+CREATE PROCEDURE `play4samecards`(CAR1 VARCHAR(30),CAR2 VARCHAR(30),CAR3 VARCHAR(30),CAR4 VARCHAR(30))
+BEGIN
+DECLARE X1 INT;
+DECLARE X2 INT;
+DECLARE X3 INT;
+DECLARE X4 INT;
+SET X1=(SELECT card_number FROM deck INNER JOIN hand ON deck.cardId=hand.cardId INNER JOIN players ON hand.playerId=players.playerId WHERE deck.cardCode= CAR1 AND players.p_turn=0 LIMIT 1) ;
+SET X2=(SELECT card_number FROM deck INNER JOIN hand ON deck.cardId=hand.cardId INNER JOIN players ON hand.playerId=players.playerId WHERE deck.cardCode= CAR2 AND players.p_turn=0 LIMIT 1);
+SET X3=(SELECT card_number FROM deck INNER JOIN hand ON deck.cardId=hand.cardId INNER JOIN players ON hand.playerId=players.playerId WHERE deck.cardCode= CAR3 AND players.p_turn=0 LIMIT 1);
+SET X4=(SELECT card_number FROM deck INNER JOIN hand ON deck.cardId=hand.cardId INNER JOIN players ON hand.playerId=players.playerId WHERE deck.cardCode= CAR4 AND players.p_turn=0 LIMIT 1);
+IF (X1=X2 AND X2=X3 AND X3=X4) THEN
+INSERT INTO discarded_cards (cardCode) VALUES ((SELECT cardCode FROM deck WHERE cardCode=CAR1));
+INSERT INTO discarded_cards (cardCode) VALUES ((SELECT cardCode FROM deck WHERE cardCode=CAR2));
+INSERT INTO discarded_cards (cardCode) VALUES ((SELECT cardCode FROM deck WHERE cardCode=CAR3));
+INSERT INTO discarded_cards (cardCode) VALUES ((SELECT cardCode FROM deck WHERE cardCode=CAR4));
+
+
+DELETE FROM hand WHERE cardId IN (SELECT hand.cardId FROM hand INNER JOIN deck on deck.cardId = hand.cardId INNER JOIN players on hand.playerId = players.playerId WHERE deck.cardCode = CAR1 AND p_turn = 0) LIMIT 1;
+DELETE FROM hand WHERE cardId IN (SELECT hand.cardId FROM hand INNER JOIN deck on deck.cardId = hand.cardId INNER JOIN players on hand.playerId = players.playerId WHERE deck.cardCode = CAR2 AND p_turn = 0) LIMIT 1;
+DELETE FROM hand WHERE cardId IN (SELECT hand.cardId FROM hand INNER JOIN deck on deck.cardId = hand.cardId INNER JOIN players on hand.playerId = players.playerId WHERE deck.cardCode = CAR3 AND p_turn = 0) LIMIT 1;
+DELETE FROM hand WHERE cardId IN (SELECT hand.cardId FROM hand INNER JOIN deck on deck.cardId = hand.cardId INNER JOIN players on hand.playerId = players.playerId WHERE deck.cardCode = CAR4 AND p_turn = 0) LIMIT 1;
+
 END IF;
 END//
 DELIMITER ;
@@ -297,6 +328,43 @@ BEGIN
 		UPDATE players SET p_turn = 0 WHERE playerId = 2;
 	END IF;
 	
+END//
+DELIMITER ;
+
+-- Dumping structure for procedure pinacle.sequenceof5cards
+DELIMITER //
+CREATE PROCEDURE `sequenceof5cards`(CAR1 VARCHAR(30),CAR2 VARCHAR(30),CAR3 VARCHAR(30),CAR4 VARCHAR(30),CAR5 VARCHAR(30))
+BEGIN
+ 
+DECLARE X1 INT;
+DECLARE X2 INT;
+DECLARE X3 INT;
+DECLARE X4 INT;
+DECLARE X5 INT;
+ 
+SET X1=(SELECT card_number FROM deck INNER JOIN hand ON deck.cardId=hand.cardId INNER JOIN players ON hand.playerId=players.playerId WHERE deck.cardCode= CAR1 AND players.p_turn=0 LIMIT 1);
+SET X2=(SELECT card_number FROM deck INNER JOIN hand ON deck.cardId=hand.cardId INNER JOIN players ON hand.playerId=players.playerId WHERE deck.cardCode= CAR2 AND players.p_turn=0 LIMIT 1);
+SET X3=(SELECT card_number FROM deck INNER JOIN hand ON deck.cardId=hand.cardId INNER JOIN players ON hand.playerId=players.playerId WHERE deck.cardCode= CAR3 AND players.p_turn=0 LIMIT 1);
+SET X4=(SELECT card_number FROM deck INNER JOIN hand ON deck.cardId=hand.cardId INNER JOIN players ON hand.playerId=players.playerId WHERE deck.cardCode= CAR4 AND players.p_turn=0 LIMIT 1);
+SET X5=(SELECT card_number FROM deck INNER JOIN hand ON deck.cardId=hand.cardId INNER JOIN players ON hand.playerId=players.playerId WHERE deck.cardCode= CAR5 AND players.p_turn=0 LIMIT 1);
+
+ 
+IF (X3-X1=2 AND X5-X3=2) THEN
+
+INSERT INTO discarded_cards (cardCode) VALUES ((SELECT cardCode FROM deck WHERE cardCode=CAR1));
+INSERT INTO discarded_cards (cardCode) VALUES ((SELECT cardCode FROM deck WHERE cardCode=CAR2));
+INSERT INTO discarded_cards (cardCode) VALUES ((SELECT cardCode FROM deck WHERE cardCode=CAR3));
+INSERT INTO discarded_cards (cardCode) VALUES ((SELECT cardCode FROM deck WHERE cardCode=CAR4));
+INSERT INTO discarded_cards (cardCode) VALUES ((SELECT cardCode FROM deck WHERE cardCode=CAR45));
+
+DELETE FROM hand WHERE cardId IN (SELECT hand.cardId FROM hand INNER JOIN deck on deck.cardId = hand.cardId INNER JOIN players on hand.playerId = players.playerId WHERE deck.cardCode = CAR1 AND p_turn = 0) LIMIT 1;
+DELETE FROM hand WHERE cardId IN (SELECT hand.cardId FROM hand INNER JOIN deck on deck.cardId = hand.cardId INNER JOIN players on hand.playerId = players.playerId WHERE deck.cardCode = CAR2 AND p_turn = 0) LIMIT 1;
+DELETE FROM hand WHERE cardId IN (SELECT hand.cardId FROM hand INNER JOIN deck on deck.cardId = hand.cardId INNER JOIN players on hand.playerId = players.playerId WHERE deck.cardCode = CAR3 AND p_turn = 0) LIMIT 1;
+DELETE FROM hand WHERE cardId IN (SELECT hand.cardId FROM hand INNER JOIN deck on deck.cardId = hand.cardId INNER JOIN players on hand.playerId = players.playerId WHERE deck.cardCode = CAR4 AND p_turn = 0) LIMIT 1;
+DELETE FROM hand WHERE cardId IN (SELECT hand.cardId FROM hand INNER JOIN deck on deck.cardId = hand.cardId INNER JOIN players on hand.playerId = players.playerId WHERE deck.cardCode = CAR5 AND p_turn = 0) LIMIT 1;
+
+END IF;
+
 END//
 DELIMITER ;
 
