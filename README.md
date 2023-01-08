@@ -18,8 +18,11 @@
          * [Status](#status)
             * [Ανάγνωση κατάστασης παιχνιδιού](#ανάγνωση-κατάστασης-παιχνιδιού)
       * [Entities](#entities)
-         * [Board](#board-1)
-         * [Cards](#cards)
+         * [Deck](#deck)
+         * [Clonedeck](#clonedeck)
+         * [Players](#players)
+         * [Hand](#hand)
+         * [Discarded_cards](#discarded_cards)
          * [Game_status](#game_status)
 
 ## Οδηγίες Εγκατάστασης
